@@ -1,0 +1,62 @@
+use hr_analytics;
+#attrition by jobrole
+select jobrole,
+count(if(attrition='yes',1,null)) as attritioncount
+from employee_attrition2
+group by jobrole
+order by attritioncount desc;
+
+#attrition by age;
+
+select age_group,
+count(if(attrition='yes',1,null)) as attritioncount
+from employee_attrition2
+group by age_group
+order by attritioncount desc;
+
+#avg salary by dept
+
+select department,
+round(avg(monthlyincome),2) as avgsalary
+from employee_attrition2
+group by department
+order by avgsalary desc;
+
+
+
+
+
+
+select *
+from employee_attrition2;
+
+#DEPT WISE ATTRITION RATE
+
+with dept_summary as (
+Select department,count(*) as totalemployees,
+count(if(attrition='yes',1,null)) as attritioncount
+from employee_attrition2
+group by department)
+select *,
+round((attritioncount*100.0)/totalemployees,2) as attritionrate
+from dept_summary;
+
+#ranking dept
+
+select department,count(if(attrition='yes',1,null)) as attritioncount,
+rank() over(order by count(if(attrition='yes',1,null)) desc
+) as deptrank
+from employee_attrition2
+group by department;
+
+#top 3 high paid employees
+
+
+with salary_rank as (
+select employeenumber,department,monthlyincome,
+row_number() over( partition by department order by monthlyincome desc ) as ranking
+from employee_attrition2)
+select *
+from salary_rank
+limit 3;
+
