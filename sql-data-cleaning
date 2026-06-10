@@ -1,0 +1,92 @@
+CREATE DATABASE hr_analytics;
+use hr_analytics;
+
+alter table `employee-atttition`
+rename to employee_attrition;
+
+select *
+from employee_attrition;
+
+alter table employee_atttition
+rename to employee_attrition;
+
+create table employee_attrition2 as
+select *
+from employee_attrition;
+
+select *
+from employee_attrition2;
+
+#duplicates
+
+select employeenumber, count(*) as cnt
+from employee_attrition2
+group by employeenumber
+having cnt > 1;
+
+#total rows
+
+select count(employeenumber) as `total rows`
+from employee_attrition2;
+
+#empty strings
+
+select *
+from employee_attrition2
+where trim(department)= ' ' ;
+select *
+from employee_attrition2
+where trim(jobrole)= ' ';
+
+alter table employee_attrition2
+rename column ï»¿Age to Age;
+
+select distinct gender
+from employee_attrition2
+order by 1 asc;
+
+#null
+
+select AGE
+from employee_attrition2
+WHERE AGE IS NULL
+OR DEPARTMENT IS null
+or monthlyincome is null;
+
+describe employee_attrition2;
+
+select max(age), min(age)
+from employee_attrition2;
+select max(monthlyincome), min(monthlyincome)
+from employee_attrition2;
+
+alter table employee_attrition2
+add column age_group varchar(20);
+
+update employee_attrition2
+set age_group =
+case 
+when age <= 25 then 'young'
+when age <= 35 then 'adult'
+when age<=  50 then 'middle age'
+else 'senior'
+end;
+
+#DEPT WISE ATTRITION RATE
+
+with dept_summary as (
+Select department,count(*) as totalemployees,
+count(if(attrition='yes',1,null)) as attritioncount
+from employee_attrition2
+group by department)
+select *,
+round((attritioncount*100.0)/totalemployees,2) as attritionrate
+from dept_summary;
+
+#ranking dept
+
+select department,count(if(attrition='yes',1,null)) as attritioncount,
+rank() over(order by count(if(attrition='yes',1,null)) desc
+) as deptrank
+from employee_attrition2
+group by department;
