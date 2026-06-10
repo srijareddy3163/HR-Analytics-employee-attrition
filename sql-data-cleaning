@@ -72,21 +72,3 @@ when age<=  50 then 'middle age'
 else 'senior'
 end;
 
-#DEPT WISE ATTRITION RATE
-
-with dept_summary as (
-Select department,count(*) as totalemployees,
-count(if(attrition='yes',1,null)) as attritioncount
-from employee_attrition2
-group by department)
-select *,
-round((attritioncount*100.0)/totalemployees,2) as attritionrate
-from dept_summary;
-
-#ranking dept
-
-select department,count(if(attrition='yes',1,null)) as attritioncount,
-rank() over(order by count(if(attrition='yes',1,null)) desc
-) as deptrank
-from employee_attrition2
-group by department;
