@@ -60,3 +60,20 @@ select *
 from salary_rank
 limit 3;
 
+#by gender
+
+select gender,count(if(attrition='yes',1,null)) as attritioncount
+from employee_attrition2
+group by gender;
+
+#by educationfield
+select educationfield,count(if(attrition='yes',1,null)) as attritioncount
+from employee_attrition2
+group by educationfield;
+
+#avg salary by jobrole
+select jobrole,
+round(avg(monthlyincome),0) as avg_salary
+from employee_attrition2
+group by jobrole
+order by avg_salary desc;
