@@ -77,3 +77,10 @@ round(avg(monthlyincome),0) as avg_salary
 from employee_attrition2
 group by jobrole
 order by avg_salary desc;
+
+#attrition  increase by overtime
+select age,department,jobrole,monthlyincome
+from employee_attrition2
+where attrition = 'Yes'
+and overtime= 'yes'
+order by monthlyincome;
